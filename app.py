@@ -29,25 +29,23 @@ def toggle_door():
 @app.route('/api/logs')
 def get_logs():
     import logger
-    logs = logger.get_recent_logs()
+    limit = request.args.get('limit', default=10, type=int)
+    logs = logger.get_recent_logs(limit=limit)
     return jsonify({'logs': logs})
 
-# For testing: Route to manually set sensor state (Mock only)
-@app.route('/api/debug/set_sensor/<state>')
-def debug_set_sensor(state):
-    """
-    Debug endpoint to simulate door opening/closing.
-    state: 'open' or 'closed'
-    """
-    try:
-        import mock_gpio
-        # If we are using mock_gpio, we can manipulate it.
-        pin = garage_controller.SENSOR_PIN
-        val = mock_gpio.LOW if state == 'closed' else mock_gpio.HIGH
-        mock_gpio._test_set_pin_state(pin, val)
-        return jsonify({'success': True, 'new_mock_state': state})
-    except ImportError:
-        return jsonify({'success': False, 'message': 'Mock GPIO not available'})
+@app.route('/api/archives')
+def get_archives():
+    import logger
+    archives = logger.get_archived_logs()
+    return jsonify({'archives': archives})
+
+@app.route('/api/archives/<filename>')
+def get_archive_content(filename):
+    import logger
+    logs = logger.read_log_file(filename)
+    return jsonify({'logs': logs})
+
+
 
 if __name__ == '__main__':
     try:

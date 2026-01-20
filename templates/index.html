@@ -4,15 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garage Zero</title>
+    <title>Garagectl</title>
     <style>
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
             --text-color: #ffffff;
             --accent-color: #007bff34;
+            --btn-text: white;
+            --log-bg: #252525;
+            --log-text: #aaa;
             --status-closed: #dc3545;
             --status-open: #28a745;
+            --garage-bg: #333;
+            --garage-door: #222;
+            --door-panel-color: #444;
+            --door-line-color: #5f5f5f;
+            --table-border: #333;
+            --table-header-bg: #2a2a2a;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #dbcd9d;
+            --card-bg: #ffffff;
+            --text-color: #444444;
+            --accent-color: #007bff;
+            --btn-text: white;
+            --log-bg: #f9f9f9;
+            --log-text: #333;
+            --status-closed: #e02e3f;
+            --status-open: #218838;
+            --garage-bg: #6e6441;
+            --garage-door: #444;
+            --door-panel-color: #dbcd9d;
+            --door-line-color: #b0a37e;
+            --table-border: #ddd;
+            --table-header-bg: #f0f0f0;
         }
 
         body {
@@ -23,7 +50,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -31,13 +59,29 @@
             background-color: var(--card-bg);
             padding: 2rem;
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
+            /* Slightly wider for table */
+            transition: background-color 0.3s, box-shadow 0.3s;
+            position: relative;
         }
 
         h1 {
             margin-top: 0;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            padding: 5px;
+            width: auto;
         }
 
         .status-indicator {
@@ -46,6 +90,7 @@
             padding: 10px;
             border-radius: 8px;
             background-color: #333;
+            color: white;
             transition: background-color 0.3s;
         }
 
@@ -57,9 +102,9 @@
             background-color: var(--status-open);
         }
 
-        button {
+        button.action-btn {
             background-color: var(--accent-color);
-            color: white;
+            color: var(--btn-text);
             border: none;
             padding: 15px 32px;
             text-align: center;
@@ -69,70 +114,50 @@
             border-radius: 50px;
             cursor: pointer;
             width: 100%;
-            transition: transform 0.1s, opacity 0.2s;
+            transition: transform 0.1s, opacity 0.2s, background-color 0.3s;
         }
 
-        button:active {
+        button.action-btn:active {
             transform: scale(0.98);
         }
 
-        button:disabled {
+        button.action-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-        }
-
-        .logs-container {
-            margin-top: 30px;
-            text-align: left;
-            background: #252525;
-            padding: 15px;
-            border-radius: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 0.9rem;
-        }
-
-        .log-entry {
-            border-bottom: 1px solid #333;
-            padding: 5px 0;
-            color: #aaa;
         }
 
         /* Garage Animation Styles */
         .garage-container {
             width: 200px;
             height: 160px;
-            background-color: #333;
+            background-color: var(--garage-bg);
             border: 5px solid #555;
             border-bottom: none;
             margin: 20px auto;
             position: relative;
             overflow: hidden;
-            /* Hides the door when it goes up */
             border-radius: 5px 5px 0 0;
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s;
         }
 
         .garage-door-visual {
             width: 100%;
             height: 100%;
             background: repeating-linear-gradient(180deg,
-                    #444,
-                    #444 18px,
-                    #222 20px);
+                    var(--door-panel-color),
+                    var(--door-panel-color) 18px,
+                    var(--door-line-color) 20px);
             position: absolute;
             bottom: 0;
             left: 0;
             transition: transform 2.0s ease-in-out;
             transform: translateY(0);
-            /* Default Closed */
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
 
         .garage-door-visual.visual-open {
             transform: translateY(-90%);
-            /* Slide UP */
         }
 
         .garage-door-visual::after {
@@ -148,18 +173,150 @@
             opacity: 0.7;
         }
 
-        .debug-controls {
-            margin-top: 2rem;
-            border-top: 1px solid #333;
-            padding-top: 1rem;
+        /* Logs Section */
+        .logs-section {
+            margin-top: 30px;
         }
 
-        .debug-btn {
-            background-color: #444;
+        .logs-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .logs-btn {
+            padding: 5px 10px;
             font-size: 0.8rem;
-            padding: 8px 16px;
-            margin: 5px;
-            width: auto;
+            border-radius: 5px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--text-color);
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .logs-btn:hover {
+            opacity: 0.8;
+        }
+
+        .logs-table-container {
+            text-align: left;
+            background: var(--log-bg);
+            color: var(--log-text);
+            padding: 0;
+            border-radius: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid var(--table-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--table-border);
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            position: sticky;
+            top: 0;
+        }
+
+        .icon-cell {
+            text-align: center;
+            width: 24px;
+        }
+
+        /* Icons */
+        .icon-open {
+            color: var(--status-open);
+        }
+
+        .icon-closed {
+            color: var(--status-closed);
+        }
+
+        .icon-user {
+            color: var(--accent-color);
+        }
+
+        /* Default blue-ish */
+
+        /* Modal for Archives */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            color: var(--text-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--text-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .archive-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .archive-list li {
+            padding: 10px;
+            border-bottom: 1px solid var(--table-border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .archive-list li:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
         }
     </style>
 </head>
@@ -167,7 +324,18 @@
 <body>
 
     <div class="container">
-        <h1>AQIM Garage Door</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+            <svg id="theme-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path id="sun-path"
+                    d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z">
+                </path>
+                <path id="moon-path"
+                    d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"
+                    style="display: none;"></path>
+            </svg>
+        </button>
+
+        <h1>Garagectl</h1>
 
         <div class="garage-container">
             <div id="garageVisual" class="garage-door-visual"></div>
@@ -177,79 +345,257 @@
             Loading...
         </div>
 
-        <button id="toggleBtn" onclick="toggleDoor()">
+        <button id="toggleBtn" class="action-btn" onclick="toggleDoor()">
             Operate Door
         </button>
 
-        <div class="logs-container" id="logs">
-            <div class="log-entry">Loading logs...</div>
+        <div class="logs-section">
+            <div class="logs-controls">
+                <span style="font-size: 0.9rem; font-weight: bold;">Activity Log</span>
+                <button class="logs-btn" onclick="openArchiveModal()">📂 View Archives</button>
+            </div>
+            <div class="logs-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="icon-cell"></th>
+                            <th>Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <tr>
+                            <td colspan="3">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+    </div>
 
-        <!-- Debug Controls for Manual Testing without HW -->
-        <div class="debug-controls">
-            <p style="font-size: 0.8rem; color: #888;">Debug Simulation</p>
-            <button class="debug-btn" onclick="debugSet('open')">Sim: Force Open</button>
-            <button class="debug-btn" onclick="debugSet('closed')">Sim: Force Closed</button>
+    <!-- Archive Viewer Modal -->
+    <div id="archiveModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchiveModal()">&times;</span>
+            <h2 id="archiveTitle">Daily Archives</h2>
+
+            <!-- List View -->
+            <div id="archiveListView">
+                <p>Select a date to view logs:</p>
+                <ul id="archiveList" class="archive-list">
+                    <li>Loading...</li>
+                </ul>
+            </div>
+
+            <!-- Detail View -->
+            <div id="archiveDetailView" style="display: none;">
+                <button class="logs-btn" onclick="showArchiveList()" style="margin-bottom:10px;">&larr; Back</button>
+                <div class="logs-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="icon-cell"></th>
+                                <th>Time</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archiveDetailBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!-- SVG Definitions for use in JS -->
+    <div style="display: none;">
+        <!-- Check/Open -->
+        <svg id="icon-check" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+        </svg>
+        <!-- Lock/Closed -->
+        <svg id="icon-lock" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path
+                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+        </svg>
+        <!-- User -->
+        <svg id="icon-user" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
     </div>
 
     <script>
         const statusEl = document.getElementById('status');
         const btnFn = document.getElementById('toggleBtn');
-        const logsEl = document.getElementById('logs');
+        const logsBody = document.getElementById('logsTableBody');
         const visualEl = document.getElementById('garageVisual');
 
+        // Theme Support
+        function updateThemeIcon() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            document.getElementById('sun-path').style.display = isLight ? 'none' : 'block';
+            document.getElementById('moon-path').style.display = isLight ? 'block' : 'none';
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            if (current === 'light') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+            updateThemeIcon();
+        }
+
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+        updateThemeIcon();
+
+        // Icon Helpers
+        function getIcon(action, state) {
+            let svgId = 'icon-user'; // Default
+            let colorClass = 'icon-user';
+
+            if ((state && state.includes("Open")) || (action && action.includes("Open"))) {
+                svgId = 'icon-check';
+                colorClass = 'icon-open';
+            } else if ((state && state.includes("Closed")) || (action && action.includes("Closed"))) {
+                svgId = 'icon-lock';
+                colorClass = 'icon-closed';
+            }
+
+            // Special overrides
+            if (action && action.includes("User Toggle")) {
+                svgId = 'icon-user';
+                colorClass = 'icon-user';
+            }
+
+            const svgContent = document.getElementById(svgId).innerHTML;
+            return `<svg class="${colorClass}" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">${svgContent}</svg>`;
+        }
+
+        // Status & Logs
         function updateStatus() {
             fetch('/api/status')
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
                     statusEl.innerText = "Door is " + data.status;
                     statusEl.className = 'status-indicator ' + (data.status === 'Open' ? 'status-open' : 'status-closed');
 
-                    // Update Visual Animation
-                    if (data.status === 'Open') {
-                        visualEl.classList.add('visual-open');
-                    } else {
-                        visualEl.classList.remove('visual-open');
-                    }
+                    if (data.status === 'Open') visualEl.classList.add('visual-open');
+                    else visualEl.classList.remove('visual-open');
                 })
-                .catch(err => console.error("Error fetching status:", err));
+                .catch(console.error);
 
-            fetch('/api/logs')
-                .then(response => response.json())
+            fetch('/api/logs?limit=50')
+                .then(r => r.json())
                 .then(data => {
-                    logsEl.innerHTML = data.logs.map(line => `<div class="log-entry">${line}</div>`).join('');
+                    renderLogsToTable(data.logs, logsBody);
                 })
-                .catch(err => console.error("Error fetching logs:", err));
+                .catch(console.error);
+        }
+
+        function renderLogsToTable(logs, tbody) {
+            if (!logs || logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3">No logs found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = logs.map(log => {
+                // log = {timestamp, action, state}
+                const icon = getIcon(log.action, log.state);
+                // Parse timestamp to just time if it's today? Keep full for now or simple crop
+                // Timestamp format: 2026-01-19 23:54:48
+                const timeStr = log.timestamp.split(' ')[1] || log.timestamp;
+
+                return `
+                    <tr>
+                        <td class="icon-cell">${icon}</td>
+                        <td>${timeStr}</td>
+                        <td>${log.action} <span style="font-size:0.8em; opacity:0.7">(${log.state})</span></td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function toggleDoor() {
             btnFn.disabled = true;
             fetch('/api/toggle', { method: 'POST' })
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
                     console.log(data);
-                    // Re-enable button after a simplified "door travel" time (mocking 2s)
                     setTimeout(() => { btnFn.disabled = false; }, 2000);
                 })
                 .catch(err => {
-                    console.error("Error toggling:", err);
+                    console.error(err);
                     btnFn.disabled = false;
                 });
         }
 
-        function debugSet(state) {
-            fetch(`/api/debug/set_sensor/${state}`)
-                .then(res => res.json())
+        // Polling
+        const poller = setInterval(updateStatus, 2000);
+        updateStatus();
+
+        // Archives Modal
+        const modal = document.getElementById("archiveModal");
+        const listEl = document.getElementById("archiveList");
+        const detailBody = document.getElementById("archiveDetailBody");
+
+        function openArchiveModal() {
+            modal.style.display = "block";
+            fetchArchives();
+        }
+
+        function closeArchiveModal() {
+            modal.style.display = "none";
+            showArchiveList(); // Reset view
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                closeArchiveModal();
+            }
+        }
+
+        function fetchArchives() {
+            listEl.innerHTML = "<li>Loading...</li>";
+            fetch('/api/archives')
+                .then(r => r.json())
                 .then(data => {
-                    console.log("Debug set:", data);
-                    updateStatus();
+                    if (data.archives.length === 0) {
+                        listEl.innerHTML = "<li>No archives found.</li>";
+                        return;
+                    }
+                    listEl.innerHTML = data.archives.map(f =>
+                        `<li onclick="viewArchive('${f}')">${f.replace('garage_events.log.', '')}</li>`
+                    ).join('');
+                })
+                .catch(err => listEl.innerHTML = "<li>Error loading archives.</li>");
+        }
+
+        function viewArchive(filename) {
+            document.getElementById("archiveListView").style.display = "none";
+            document.getElementById("archiveDetailView").style.display = "block";
+            document.getElementById("archiveTitle").innerText = "Log: " + filename.replace('garage_events.log.', '');
+
+            detailBody.innerHTML = '<tr><td colspan="3">Loading...</td></tr>';
+
+            fetch('/api/archives/' + filename)
+                .then(r => r.json())
+                .then(data => {
+                    renderLogsToTable(data.logs, detailBody);
                 });
         }
 
-        // Poll for status every 2 seconds
-        setInterval(updateStatus, 2000);
-        updateStatus();
+        function showArchiveList() {
+            document.getElementById("archiveListView").style.display = "block";
+            document.getElementById("archiveDetailView").style.display = "none";
+            document.getElementById("archiveTitle").innerText = "Daily Archives";
+        }
+
     </script>
 </body>
 
