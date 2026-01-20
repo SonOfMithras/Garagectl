@@ -102,6 +102,18 @@
             background-color: var(--status-open);
         }
 
+        .status-mid {
+            background-color: #ffc107;
+            /* Yellow/Orange for intermediate */
+            color: #333 !important;
+        }
+
+        .status-mid {
+            background-color: #ffc107;
+            /* Yellow/Orange for intermediate */
+            color: #333 !important;
+        }
+
         button.action-btn {
             background-color: var(--accent-color);
             color: var(--btn-text);
@@ -158,6 +170,14 @@
 
         .garage-door-visual.visual-open {
             transform: translateY(-90%);
+        }
+
+        .garage-door-visual.visual-partial {
+            transform: translateY(-50%);
+        }
+
+        .garage-door-visual.visual-ajar {
+            transform: translateY(-15%);
         }
 
         .garage-door-visual::after {
@@ -484,10 +504,25 @@
                 .then(r => r.json())
                 .then(data => {
                     statusEl.innerText = "Door is " + data.status;
-                    statusEl.className = 'status-indicator ' + (data.status === 'Open' ? 'status-open' : 'status-closed');
 
-                    if (data.status === 'Open') visualEl.classList.add('visual-open');
-                    else visualEl.classList.remove('visual-open');
+                    let statusClass = 'status-indicator';
+                    if (data.status === 'Open') statusClass += ' status-open';
+                    else if (data.status === 'Closed') statusClass += ' status-closed';
+                    else statusClass += ' status-mid'; // Ajar, Partial, Moving
+
+                    statusEl.className = statusClass;
+
+                    // Update Visual Animation
+                    // Reset all
+                    visualEl.classList.remove('visual-open', 'visual-partial', 'visual-ajar');
+
+                    if (data.status === 'Open') {
+                        visualEl.classList.add('visual-open');
+                    } else if (data.status === 'Partially Open') {
+                        visualEl.classList.add('visual-partial');
+                    } else if (data.status === 'Ajar') {
+                        visualEl.classList.add('visual-ajar');
+                    }
                 })
                 .catch(console.error);
 

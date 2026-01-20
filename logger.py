@@ -4,7 +4,11 @@ import re
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
 
-LOG_FILE = "garage_events.log"
+LOG_DIR = ".archivedlogs"
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+LOG_FILE = os.path.join(LOG_DIR, "garage_events.log")
 
 # Setup Logger
 logger = logging.getLogger("GarageLogger")
@@ -91,10 +95,15 @@ def get_archived_logs():
     """
     archives = []
     # List all files in directory
-    for f in os.listdir("."):
-        if f.startswith(LOG_FILE + "."):
-            # f is like garage_events.log.2023-10-27
-            archives.append(f)
+    if os.path.exists(LOG_DIR):
+        for f in os.listdir(LOG_DIR):
+            full_path = os.path.join(LOG_DIR, f)
+            # Check if it is an archive of our log file
+            # Our log file is .archivedlogs/garage_events.log
+            # Archives will be .archivedlogs/garage_events.log.2023-10-27
+            base_log_name = os.path.basename(LOG_FILE)
+            if f.startswith(base_log_name + "."):
+                archives.append(f)
     archives.sort(reverse=True) # Newest first
     return archives
 
@@ -106,11 +115,14 @@ def read_log_file(filename):
     if os.path.dirname(filename) != "":
         return []
     
-    if not os.path.exists(filename):
+    # Construct full path in LOG_DIR
+    full_path = os.path.join(LOG_DIR, filename)
+    
+    if not os.path.exists(full_path):
         return []
         
     parsed_logs = []
-    with open(filename, 'r') as f:
+    with open(full_path, 'r') as f:
         for line in f:
             parsed = parse_log_line(line)
             if parsed:

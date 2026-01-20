@@ -15,8 +15,7 @@ def index():
 @app.route('/api/status')
 def get_status():
     status = garage_controller.get_door_status()
-    # In a real scenario, we might want to know if it's "Opening" or "Closing"
-    # based on time since last toggle, but for now just raw sensor state.
+    # If status is one of the new intermediate states, we treat it as such.
     return jsonify({'status': status})
 
 @app.route('/api/toggle', methods=['POST'])
