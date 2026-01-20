@@ -1,8 +1,8 @@
 # Garagectl
 
-**Garagectl** is a simple, DIY smart garage door opener running on a Raspberry Pi Zero 2 W. It provides a web dashboard to monitor and control your garage door from anywhere on your local network.
+**Garagectl** is a simple, DIY smart garage door opener running on a Raspberry Pi Zero 2 W. It provides a web dashboard to monitor and control your garage door from anywhere on your local network - pair with tailscale for remote access.
 
-![Garagectl Dashboard](https://via.placeholder.com/800x400?text=Garagectl+Dashboard+Preview)
+![Garagectl Dashboard]
 
 ## Features
 -   **Web Interface**: Clean, responsive dashboard to view status and toggle the door.
@@ -14,29 +14,29 @@
 
 ## 🛒 Hardware Shopping List
 
-You will need the following components. To build this for under $30, buy "Starter Kits" where possible.
+You will need the following components. To build this for under $100, buy "Starter Kits" where possible.
 
 ### Core Computer
 | Component | Recommendation | Logic | Est. Price |
 | :--- | :--- | :--- | :--- |
-| **SBC** | [**Raspberry Pi Zero 2 W**](https://www.amazon.com/s?k=raspberry+pi+zero+2+w) | Powerful & cheap. Try "Starter Kits" if sold out solo. | $15 (Board) / $45 (Kit) |
-| **Micro SD Card** | [**32GB Class 10**](https://www.amazon.com/s?k=sandisk+ultra+32gb+micro+sd) | Required for OS. Use reliable brands (SanDisk/Samsung). | $10 |
-| **Power Supply** | [**5V 2.5A Micro USB PSU**](https://www.amazon.com/s?k=5v+2.5a+micro+usb+power+supply) | Official Pi PSU or generic UL-listed 5V 2.5A+. | $12 |
+| **SBC** | **Raspberry Pi Zero 2 W** | Powerful & cheap. Try "Starter Kits" if sold out solo. | $15 (Board) / $45 (Kit) |
+| **Micro SD Card** | **32GB Class 10** | Required for OS. Use reliable brands (SanDisk/Samsung). | $10 |
+| **Power Supply** | **5V 2.5A Micro USB PSU** | Official Pi PSU or generic UL-listed 5V 2.5A+. | $12 |
 
 ### Interface Hardware
 | Component | Recommendation | Why? | Est. Price |
 | :--- | :--- | :--- | :--- |
-| **Relay Module** | [**5V 1-Channel Relay**](https://www.amazon.com/s?k=5v+1+channel+relay+module+raspberry+pi) | Simulates the button press. Look for "Active Low". | $6 (often 2-pack) |
-| **Door Sensor** | [**Magnetic Reed Switch**](https://www.amazon.com/s?k=magnetic+reed+switch+wired+garage+door) | Security alarm style (Wired). Floor-mount types are durable. | $12 - $15 |
-| **Wires** | [**Dupont Jumper Wires**](https://www.amazon.com/s?k=dupont+jumper+wires+kit) | Female-to-Female & Male-to-Female for GPIO. | $6 (Kit) |
-| **Bell Wire** | [**2-Core Bell Wire**](https://www.amazon.com/s?k=2+core+bell+wire) | To run long distance from opener to sensor. | $10 - $15 |
+| **Relay Module** | **5V 1-Channel Relay** | Simulates the button press. Look for "Active Low". | $6 (often 2-pack) |
+| **Door Sensor** | **Magnetic Reed Switch** | Security alarm style (Wired). Floor-mount types are durable. | $12 - $15 |
+| **Wires** | **Dupont Jumper Wires** | Female-to-Female & Male-to-Female for GPIO. | $6 (Kit) |
+| **Bell Wire** | **2-Core Bell Wire** | To run long distance from opener to sensor. | $10 - $15 |
 
 ### Mounting & Misc
 | Component | Recommendation |
 | :--- | :--- |
-| **Case** | [**Raspberry Pi Zero Case**](https://www.amazon.com/s?k=raspberry+pi+zero+case) (Essential for protection) |
-| **Mounting Tape** | [**3M Command Strips**](https://www.amazon.com/s?k=3m+command+strips) (No screws needed) |
-| **SD Card Reader** | [**USB SD Card Reader**](https://www.amazon.com/s?k=usb+sd+card+reader) (**Required** to flash OS on PC) |
+| **Case** | **Raspberry Pi Zero Case** (Essential for protection) |
+| **Mounting Tape** | **3M Command Strips** (No screws needed) |
+| **SD Card Reader** | **USB SD Card Reader** (**Required** to flash OS on PC) |
 
 ### 🛠️ Tools Required
 | Tool | Why? | Alternatives |
@@ -45,8 +45,6 @@ You will need the following components. To build this for under $30, buy "Starte
 | **Wire Strippers** | To strip bell wire. | Scissors (carefully). |
 | **Step Ladder** | To reach opener. | Sturdy chair. |
 | **Cable Clips** | To hide wires. | Duct tape. |
-
-> **No Soldering Required**: This project uses screw terminals and plug-in headers.
 
 ---
 
