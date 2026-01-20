@@ -6,7 +6,10 @@
 
 ## Features
 -   **Web Interface**: Clean, responsive dashboard to view status and toggle the door.
--   **Real-Time Monitoring**: Uses a magnetic reed switch to detect if the door is open or closed.
+-   **Multi-Sensor Tracking**: Supports up to 4 sensors to track exact door position (Closed, Ajar, Partially Open, Open).
+-   **Enhanced Logging**: Visual log of events with icons, daily archiving, and a built-in archive viewer.
+-   **Theming**: Light/Dark mode with monochromatic styling.
+-   **Real-Time Monitoring**: Uses magnetic reed switches to detect door state.
 -   **Secure**: Runs locally on your network; no cloud subscription required.
 -   **Mock Mode**: Development mode to test the UI on a regular PC without GPIO pins.
 
@@ -27,7 +30,7 @@ You will need the following components. To build this for under $100, buy "Start
 | Component | Recommendation | Why? | Est. Price |
 | :--- | :--- | :--- | :--- |
 | **Relay Module** | **5V 1-Channel Relay** | Simulates the button press. Look for "Active Low". | $6 (often 2-pack) |
-| **Door Sensor** | **Magnetic Reed Switch** | Security alarm style (Wired). Floor-mount types are durable. | $12 - $15 |
+| **Door Sensors** | **4x Magnetic Reed Switches** | For granular position tracking (Closed -> Open). | $12 - $15 |
 | **Wires** | **Dupont Jumper Wires** | Female-to-Female & Male-to-Female for GPIO. | $6 (Kit) |
 | **Bell Wire** | **2-Core Bell Wire** | To run long distance from opener to sensor. | $10 - $15 |
 
@@ -60,8 +63,11 @@ You will need the following components. To build this for under $100, buy "Start
 | **Relay** | VCC | 5V Power | Pin 2 or 4 (5V) |
 | **Relay** | GND | Ground | Pin 6 (GND) |
 | **Relay** | IN (Signal) | GPIO 17 | Pin 11 (GPIO 17) |
-| **Reed Switch** | Wire 1 | Ground | Pin 9 (GND) |
-| **Reed Switch** | Wire 2 | GPIO 27 | Pin 13 (GPIO 27) |
+| **Sensor 1 (Bottom)** | Wire 1 / 2 | GND / GPIO 27 | Pin 13 (AGND / GPIO 27) |
+| **Sensor 2** | Wire 1 / 2 | GND / GPIO 22 | Pin 15 (GPIO 22) |
+| **Sensor 3** | Wire 1 / 2 | GND / GPIO 23 | Pin 16 (GPIO 23) |
+| **Sensor 4 (Top)** | Wire 1 / 2 | GND / GPIO 24 | Pin 18 (GPIO 24) |
+
 
 > **Note**: The Reed Switch has no polarity. It doesn't matter which wire goes to where.
 
