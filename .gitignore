@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/
+
+# Logs
+*.log
+
+# OS Specific
+.DS_Store
+.idea/
+.vscode/
+
+# Brain / Thinking (User Request)
+task.md
+walkthrough.md
+.mythoughts.md
+implementation_plan.md
