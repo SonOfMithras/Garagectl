@@ -338,6 +338,41 @@
                 opacity: 1
             }
         }
+
+        /* Led Indicators */
+        .sensor-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            border: 1px solid var(--table-border);
+        }
+
+        .sensor-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-color);
+        }
+
+        .led {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #444;
+            margin-bottom: 5px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+            border: 1px solid #222;
+        }
+
+        .led.active {
+            background-color: #28a745;
+            box-shadow: 0 0 8px #28a745, inset 0 0 5px rgba(255, 255, 255, 0.4);
+        }
     </style>
 </head>
 
@@ -363,6 +398,26 @@
 
         <div id="status" class="status-indicator">
             Loading...
+        </div>
+
+        <!-- Sensor Diagnostics -->
+        <div class="sensor-panel">
+            <div class="sensor-item">
+                <div id="led-top" class="led"></div>
+                <span>Top</span>
+            </div>
+            <div class="sensor-item">
+                <div id="led-half" class="led"></div>
+                <span>50%</span>
+            </div>
+            <div class="sensor-item">
+                <div id="led-quart" class="led"></div>
+                <span>25%</span>
+            </div>
+            <div class="sensor-item">
+                <div id="led-bot" class="led"></div>
+                <span>Bot</span>
+            </div>
         </div>
 
         <button id="toggleBtn" class="action-btn" onclick="toggleDoor()">
@@ -498,6 +553,12 @@
             return `<svg class="${colorClass}" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">${svgContent}</svg>`;
         }
 
+        function toggleLed(id, value) {
+            const el = document.getElementById(id);
+            if (value === 0) el.classList.add('active');
+            else el.classList.remove('active');
+        }
+
         // Status & Logs
         function updateStatus() {
             fetch('/api/status')
@@ -522,6 +583,15 @@
                         visualEl.classList.add('visual-partial');
                     } else if (data.status === 'Ajar') {
                         visualEl.classList.add('visual-ajar');
+                    }
+
+                    // Update LEDs
+                    if (data.sensors) {
+                        // 0 = Active (Magnet), 1 = Inactive
+                        toggleLed('led-bot', data.sensors.sensor_1_bottom);
+                        toggleLed('led-quart', data.sensors.sensor_2_quarter);
+                        toggleLed('led-half', data.sensors.sensor_3_half);
+                        toggleLed('led-top', data.sensors.sensor_4_top);
                     }
                 })
                 .catch(console.error);

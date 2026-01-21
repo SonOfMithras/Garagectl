@@ -158,6 +158,17 @@ def get_door_status():
     # Or intermediate states (e.g. 1 High, 2 Low, 3 High? Implementation error or Moving)
     return DOOR_MOVING
 
+def get_sensor_states():
+    """Returns the state of each individual sensor."""
+    # Active = Low (0) -> Magnet Detected
+    # Inactive = High (1) -> No Magnet
+    return {
+        "sensor_1_bottom": GPIO.input(SENSOR_PINS[0]),
+        "sensor_2_quarter": GPIO.input(SENSOR_PINS[1]),
+        "sensor_3_half": GPIO.input(SENSOR_PINS[2]),
+        "sensor_4_top": GPIO.input(SENSOR_PINS[3])
+    }
+
 def cleanup():
     global _stop_monitoring
     _stop_monitoring = True

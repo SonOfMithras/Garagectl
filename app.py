@@ -15,8 +15,9 @@ def index():
 @app.route('/api/status')
 def get_status():
     status = garage_controller.get_door_status()
+    sensors = garage_controller.get_sensor_states()
     # If status is one of the new intermediate states, we treat it as such.
-    return jsonify({'status': status})
+    return jsonify({'status': status, 'sensors': sensors})
 
 @app.route('/api/toggle', methods=['POST'])
 def toggle_door():
