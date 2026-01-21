@@ -154,8 +154,11 @@ def get_door_status():
     if s1 == GPIO.HIGH and s2 == GPIO.HIGH and s3 == GPIO.HIGH and s4 == GPIO.LOW:
         return DOOR_OPEN
 
-    # If 4 is also High (Door totally gone?) -> Open? Or Moving?
-    # Or intermediate states (e.g. 1 High, 2 Low, 3 High? Implementation error or Moving)
+    # If 4 is also High (Door totally gone?) -> likely Fully Open (past top sensor) or Unknown
+    if s1 == GPIO.HIGH and s2 == GPIO.HIGH and s3 == GPIO.HIGH and s4 == GPIO.HIGH:
+        return DOOR_OPEN
+
+    # Any other combination is undefined/moving
     return DOOR_MOVING
 
 def get_sensor_states():
