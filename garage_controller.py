@@ -4,7 +4,7 @@ import logger
 
 try:
     import RPi.GPIO as GPIO
-except ImportError:
+except (ImportError, RuntimeError):
     import mock_gpio as GPIO
 
 # Pin Configuration (BCM Mode)

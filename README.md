@@ -93,16 +93,16 @@ sudo apt install git -y
 git clone https://github.com/SonOfMithras/Garagectl.git
 cd Garagectl
 
-# 3. Install Dependencies
-sudo apt install python3-venv -y
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+# 3. Run Installer
+chmod +x install.sh
+./install.sh
 
 # 4. Test It
-python app.py
+./.venv/bin/python app.py
 ```
-Visit `http://garagepi.local:5000` to see it working.
+
+Visit `http://localhost:5000` (if running locally) or `http://<your-pi-ip>:5000` to see it working.
+> **Note:** If you configured the hostname as `garagepi`, you may be able to access it at `http://garagepi.local:5000` depending on your network.
 
 ### Part 4: Auto-Start
 To run on boot, create a systemd service:
@@ -117,8 +117,8 @@ To run on boot, create a systemd service:
     [Service]
     User=pi
     WorkingDirectory=/home/pi/Garagectl
-    Environment="PATH=/home/pi/Garagectl/venv/bin"
-    ExecStart=/home/pi/Garagectl/venv/bin/python app.py
+    Environment="PATH=/home/pi/Garagectl/.venv/bin"
+    ExecStart=/home/pi/Garagectl/.venv/bin/python app.py
     Restart=always
 
     [Install]
