@@ -25,7 +25,7 @@ DOOR_CLOSED = "Closed"
 DOOR_AJAR = "Ajar"
 DOOR_PARTIAL = "Partially Open"
 DOOR_OPEN = "Open"
-DOOR_MOVING = "Moving"
+
 
 _monitor_thread = None
 _stop_monitoring = False
@@ -158,8 +158,8 @@ def get_door_status():
     if s1 == GPIO.HIGH and s2 == GPIO.HIGH and s3 == GPIO.HIGH and s4 == GPIO.HIGH:
         return DOOR_OPEN
 
-    # Any other combination is undefined/moving
-    return DOOR_MOVING
+    # Any other combination is undefined -> Default to Open
+    return DOOR_OPEN
 
 def get_sensor_states():
     """Returns the state of each individual sensor."""
