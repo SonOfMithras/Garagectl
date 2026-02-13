@@ -2,9 +2,9 @@
 
 **Garagectl** is a simple, DIY smart garage door opener running on a Raspberry Pi Zero 2 W. It provides a web dashboard to monitor and control your garage door from anywhere on your local network - pair with tailscale for remote access.
 
-![Garagectl Dashboard]
+##[Garagectl Dashboard]
 
-## Features
+### Features
 -   **Web Interface**: Clean, responsive dashboard to view status and toggle the door.
 -   **Multi-Sensor Tracking**: Supports up to 4 sensors to track exact door position (Closed, Ajar, Partially Open, Open).
 -   **Enhanced Logging**: Visual log of events with icons, daily archiving, and a built-in archive viewer.
