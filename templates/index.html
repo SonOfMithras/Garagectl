@@ -163,7 +163,7 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            transition: transform 2.0s ease-in-out;
+            transition: transform 8.0s ease-in-out;
             transform: translateY(0);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
@@ -400,23 +400,10 @@
             Loading...
         </div>
 
-        <!-- Sensor Diagnostics -->
         <div class="sensor-panel">
             <div class="sensor-item">
-                <div id="led-top" class="led"></div>
-                <span>Top</span>
-            </div>
-            <div class="sensor-item">
-                <div id="led-half" class="led"></div>
-                <span>50%</span>
-            </div>
-            <div class="sensor-item">
-                <div id="led-quart" class="led"></div>
-                <span>25%</span>
-            </div>
-            <div class="sensor-item">
                 <div id="led-bot" class="led"></div>
-                <span>Bot</span>
+                <span>Sensor 1 (Closed)</span>
             </div>
         </div>
 
@@ -589,9 +576,6 @@
                     if (data.sensors) {
                         // 0 = Active (Magnet), 1 = Inactive
                         toggleLed('led-bot', data.sensors.sensor_1_bottom);
-                        toggleLed('led-quart', data.sensors.sensor_2_quarter);
-                        toggleLed('led-half', data.sensors.sensor_3_half);
-                        toggleLed('led-top', data.sensors.sensor_4_top);
                     }
                 })
                 .catch(console.error);

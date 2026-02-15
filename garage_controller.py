@@ -9,22 +9,14 @@ except (ImportError, RuntimeError):
 
 # Pin Configuration (BCM Mode)
 RELAY_PIN = 17       # Pin connected to Relay ch 1
-# Sensor Pins: Bottom (0%), 25%, 50%, Top (100%)
-# Logic: Closed = All Active. Open = Only Top Active (or none if fully clear) based on user req.
-# User Req: 
-# Closed: 1,2,3,4 Active
-# Ajar: 2,3,4 Active
-# Partial: 3,4 Active
-# Open: 4 Active (or maybe none? User said "only sensor 4 is active = fully open")
-SENSOR_PINS = [27, 22, 23, 24] 
+# Sensor Pins: Only Sensor 1 (Bottom/Closed) is used.
+# Logic: Closed = Sensor 1 Active (Low). Open = Sensor 1 Inactive (High).
+SENSOR_PINS = [27] 
 
 
 # State Constants
 DOOR_OPEN = "Open"
 DOOR_CLOSED = "Closed"
-DOOR_AJAR = "Ajar"
-DOOR_PARTIAL = "Partially Open"
-DOOR_OPEN = "Open"
 
 
 _monitor_thread = None
@@ -36,6 +28,8 @@ def _monitor_door_loop():
     while not _stop_monitoring:
         current_state = get_door_status()
         if _last_known_state is not None and current_state != _last_known_state:
+            # If state changes to Open and we didn't just trigger it, it's a manual open.
+            # The logger already logs "State Change". usage of this function is consistent to requirements.
             logger.log_event("State Change", current_state)
         _last_known_state = current_state
         time.sleep(1)
@@ -45,7 +39,7 @@ def setup_gpio():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(RELAY_PIN, GPIO.OUT)
     
-    # Initialize all sensor pins as Input with Pull Up
+    # Initialize sensor pin as Input with Pull Up
     for pin in SENSOR_PINS:
         GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     
@@ -72,55 +66,45 @@ def toggle_door():
     time.sleep(0.5)                   # Hold
     GPIO.output(RELAY_PIN, GPIO.LOW)  # Release
     
-    # Mock Simulation Logic: If using Mock GPIO, simulate travel
+    # Mock Simulation Logic
     if hasattr(GPIO, '_test_set_pin_state'):
         def _mock_door_travel():
-            # Total travel time requested ~4s. We have 4 states to transition.
-            # If Closed: Closed -> Ajar -> Partial -> Open
-            # If Open: Open -> Partial -> Ajar -> Closed
+            # Simulation of door travel.
+            # User request: ~8-10 seconds for full travel.
+            travel_time = 8.0 
             
-            step_delay = 1.0 # 4 steps * 1s = 4s total
+            is_closed = (current_state == DOOR_CLOSED)
             
-            is_opening = (current_state == DOOR_CLOSED or current_state == DOOR_AJAR) 
-            
-            if is_opening:
-                # Sequence: 
-                # Start: All Low (Closed)
-                # Step 1: Pin 27 High (Ajar)
-                time.sleep(step_delay)
-                GPIO._test_set_pin_state(SENSOR_PINS[0], GPIO.HIGH)
-                print("Mock: Uncovered Sensor 1 (Ajar)")
+            if is_closed:
+                # Opening: Sensor 1 (Closed) becomes Inactive immediately or after a short delay?
+                # Usually as soon as door moves, sensor 1 opens. 
+                # But to simulate "travel", we can wait a bit or just set it immediately implies "Opening".
+                # For this simple logic: 
+                # Closed -> (Door Moves) -> Sensor 1 Open -> State becomes OPEN immediately.
+                # However, to simulate 'travel' visually if we had intermediate sensors, we'd wait.
+                # With 1 sensor: 
+                # State is Closed.
+                # Relay triggers.
+                # Door moves. Magnet leaves Sensor 1.
+                # State becomes "Open" (or at least "Not Closed").
+                
+                # Let's delay slighly to simulate the mechanical startup
+                time.sleep(1.0) 
+                GPIO._test_set_pin_state(SENSOR_PINS[0], GPIO.HIGH) # Magnet gone
+                print(f"Mock: Sensor 1 Deactivated (Door Opening/Open)")
+                
+                # Wait rest of travel time just for internal simulation consistency if we add more later
+                time.sleep(travel_time)
+                print("Mock: Door fully open (simulated time end)")
 
-                # Step 2: Pin 22 High (Partial)
-                time.sleep(step_delay)
-                GPIO._test_set_pin_state(SENSOR_PINS[1], GPIO.HIGH)
-                print("Mock: Uncovered Sensor 2 (Partial)")
-                
-                # Step 3: Pin 23 High (Open - waiting for last one?)
-                # Logic says "Only Sensor 4 is active = Fully Open". 
-                # So Sensor 3 must become Inactive (High).
-                time.sleep(step_delay)
-                GPIO._test_set_pin_state(SENSOR_PINS[2], GPIO.HIGH) 
-                print("Mock: Uncovered Sensor 3 (Open)")
-                
             else:
-                # Closing Sequence: Re-activate sensors from top down
-                # Start: Only 24 Low (Open)
+                # Closing: Door is Open (Sensor 1 High).
+                # It takes ~10s to close. Sensor 1 will only trigger at the VERY END.
+                print(f"Mock: Door Closing... waiting {travel_time}s")
+                time.sleep(travel_time)
                 
-                # Step 1: Activate 23 (Partial) -> Pin 23 Low
-                time.sleep(step_delay)
-                GPIO._test_set_pin_state(SENSOR_PINS[2], GPIO.LOW)
-                print("Mock: Covered Sensor 3 (Partial)")
-
-                # Step 2: Activate 22 (Ajar) -> Pin 22 Low
-                time.sleep(step_delay)
-                GPIO._test_set_pin_state(SENSOR_PINS[1], GPIO.LOW)
-                print("Mock: Covered Sensor 2 (Ajar)")
-
-                # Step 3: Activate 27 (Closed) -> Pin 27 Low
-                time.sleep(step_delay)
-                GPIO._test_set_pin_state(SENSOR_PINS[0], GPIO.LOW)
-                print("Mock: Covered Sensor 1 (Closed)")
+                GPIO._test_set_pin_state(SENSOR_PINS[0], GPIO.LOW) # Magnet returns
+                print("Mock: Sensor 1 Activated (Door Closed)")
 
             
         threading.Thread(target=_mock_door_travel, daemon=True).start()
@@ -129,47 +113,23 @@ def toggle_door():
 
 def get_door_status():
     """Reads the magnetic sensors to determine door state."""
-    # Active = Low (GND)
-    # Inactive = High (PullUp)
+    # Active = Low (GND) -> Closed
+    # Inactive = High (PullUp) -> Open (or at least Not Closed)
     
-    s1 = GPIO.input(SENSOR_PINS[0]) # Bottom
-    s2 = GPIO.input(SENSOR_PINS[1])
-    s3 = GPIO.input(SENSOR_PINS[2])
-    s4 = GPIO.input(SENSOR_PINS[3]) # Top
-    
-    # Logic:
-    # Closed: All Low
-    if s1 == GPIO.LOW and s2 == GPIO.LOW and s3 == GPIO.LOW and s4 == GPIO.LOW:
+    if GPIO.input(SENSOR_PINS[0]) == GPIO.LOW:
         return DOOR_CLOSED
-    
-    # Ajar: 1 High, rest Low
-    if s1 == GPIO.HIGH and s2 == GPIO.LOW and s3 == GPIO.LOW and s4 == GPIO.LOW:
-        return DOOR_AJAR
-        
-    # Partial: 1,2 High, rest Low
-    if s1 == GPIO.HIGH and s2 == GPIO.HIGH and s3 == GPIO.LOW and s4 == GPIO.LOW:
-        return DOOR_PARTIAL
-        
-    # Open: 1,2,3 High, 4 Low
-    if s1 == GPIO.HIGH and s2 == GPIO.HIGH and s3 == GPIO.HIGH and s4 == GPIO.LOW:
+    else:
         return DOOR_OPEN
-
-    # If 4 is also High (Door totally gone?) -> likely Fully Open (past top sensor) or Unknown
-    if s1 == GPIO.HIGH and s2 == GPIO.HIGH and s3 == GPIO.HIGH and s4 == GPIO.HIGH:
-        return DOOR_OPEN
-
-    # Any other combination is undefined -> Default to Open
-    return DOOR_OPEN
 
 def get_sensor_states():
-    """Returns the state of each individual sensor."""
-    # Active = Low (0) -> Magnet Detected
-    # Inactive = High (1) -> No Magnet
+    """Returns the state of the single sensor."""
     return {
         "sensor_1_bottom": GPIO.input(SENSOR_PINS[0]),
-        "sensor_2_quarter": GPIO.input(SENSOR_PINS[1]),
-        "sensor_3_half": GPIO.input(SENSOR_PINS[2]),
-        "sensor_4_top": GPIO.input(SENSOR_PINS[3])
+        # Keep other keys for API compatibility if needed, but set to None or 1?
+        # Let's remove them to be clean, frontend handles checks.
+        "sensor_2_quarter": 1,
+        "sensor_3_half": 1,
+        "sensor_4_top": 1
     }
 
 def cleanup():

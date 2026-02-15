@@ -15,16 +15,11 @@
 
 ---
 
-## 🛒 Hardware Shopping List
-
-You will need the following components. To build this for under $100, buy "Starter Kits" where possible.
-
 ### Core Computer
 | Component | Recommendation | Logic | Est. Price |
 | :--- | :--- | :--- | :--- |
 | **SBC** | **Raspberry Pi Zero 2 W** | Powerful & cheap. Try "Starter Kits" if sold out solo. | $15 (Board) / $45 (Kit) |
 | **Micro SD Card** | **32GB Class 10** | Required for OS. Use reliable brands (SanDisk/Samsung). | $10 |
-| **Power Supply** | **5V 2.5A Micro USB PSU** | Official Pi PSU or generic UL-listed 5V 2.5A+. | $12 |
 
 ### Interface Hardware
 | Component | Recommendation | Why? | Est. Price |
@@ -33,6 +28,7 @@ You will need the following components. To build this for under $100, buy "Start
 | **Door Sensors** | **4x Magnetic Reed Switches** | For granular position tracking (Closed -> Open). | $12 - $15 |
 | **Wires** | **Dupont Jumper Wires** | Female-to-Female & Male-to-Female for GPIO. | $6 (Kit) |
 | **Bell Wire** | **2-Core Bell Wire** | To run long distance from opener to sensor. | $10 - $15 |
+| **Connectors** | **Connical Caps** | For connecting wires to the garage door opener. | $4 |
 
 ### Mounting & Misc
 | Component | Recommendation |
