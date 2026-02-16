@@ -71,7 +71,7 @@ def toggle_door():
         def _mock_door_travel():
             # Simulation of door travel.
             # User request: ~8-10 seconds for full travel.
-            travel_time = 8.0 
+            travel_time = 10.0 
             
             is_closed = (current_state == DOOR_CLOSED)
             
