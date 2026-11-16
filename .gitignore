@@ -28,3 +28,9 @@ walkthrough.md
 .mythoughts.md
 implementation_plan.md
 .archivedlogs/
+
+# Android / Gradle
+android/.gradle/
+android/local.properties
+android/**/build/
+android/
