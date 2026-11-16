@@ -10,44 +10,43 @@
 
     <style>
         /* =====================================================================
-           Material Design 3 (M3) Pre-Computed HCT Tonal Tokens (Zero Bloat)
-           Generated from a Slate-Blue seed (#0061A4) for Dark & Light modes.
-           Surface elevation uses tonal steps instead of heavy drop shadows.
+           Material Design 3 (M3) Layout with Gruvbox Dark & Light Palettes
+           Zero external dependencies or runtime bloat for Raspberry Pi Zero 2 W
            ===================================================================== */
         :root {
-            /* M3 Dark Surface Hierarchy (Tones 6 -> 22) */
-            --md-sys-color-surface: #101418;
-            --md-sys-color-surface-container-lowest: #0b0e13;
-            --md-sys-color-surface-container-low: #181c20;
-            --md-sys-color-surface-container: #1c2024;
-            --md-sys-color-surface-container-high: #262a2f;
-            --md-sys-color-surface-container-highest: #31353a;
+            /* Gruvbox Dark Surface Hierarchy */
+            --md-sys-color-surface: #1d2021;                  /* bg0_h */
+            --md-sys-color-surface-container-lowest: #181a1b;
+            --md-sys-color-surface-container-low: #32302f;    /* bg0_s */
+            --md-sys-color-surface-container: #282828;        /* bg0 */
+            --md-sys-color-surface-container-high: #3c3836;   /* bg1 */
+            --md-sys-color-surface-container-highest: #504945;/* bg2 */
 
-            /* M3 Text & Outline Roles */
-            --md-sys-color-on-surface: #e0e2e8;
-            --md-sys-color-on-surface-variant: #c0c7d0;
-            --md-sys-color-outline: #8a919a;
-            --md-sys-color-outline-variant: #40474f;
+            /* Gruvbox Dark Text & Outline Roles */
+            --md-sys-color-on-surface: #ebdbb2;               /* fg1 */
+            --md-sys-color-on-surface-variant: #bdae93;       /* fg3 */
+            --md-sys-color-outline: #928374;                  /* gray */
+            --md-sys-color-outline-variant: #665c54;          /* bg3 */
 
-            /* M3 Primary Tonal Roles (Operate Door Button & Accents) */
-            --md-sys-color-primary: #9ecaff;
-            --md-sys-color-on-primary: #003258;
-            --md-sys-color-primary-container: #1b3a5c;
-            --md-sys-color-on-primary-container: #d1e4ff;
+            /* Gruvbox Dark Primary Tonal Roles (Blue/Aqua) */
+            --md-sys-color-primary: #83a598;                  /* bright blue */
+            --md-sys-color-on-primary: #1d2021;
+            --md-sys-color-primary-container: #458588;        /* neutral blue */
+            --md-sys-color-on-primary-container: #fbf1c7;     /* fg0 */
 
-            /* Semantic Door Status Roles (Harmonized M3 Red / Green / Amber) */
-            --status-closed-bg: #dc3545;
-            --status-closed-text: #ffffff;
-            --status-open-bg: #28a745;
-            --status-open-text: #ffffff;
-            --status-mid-bg: #f59e0b;
-            --status-mid-text: #1c1917;
+            /* Semantic Door Status Roles (Gruvbox Red / Aqua-Green / Yellow) */
+            --status-closed-bg: #cc241d;
+            --status-closed-text: #fbf1c7;
+            --status-open-bg: #689d6a;
+            --status-open-text: #fbf1c7;
+            --status-mid-bg: #d79921;
+            --status-mid-text: #1d2021;
 
             /* Garage Graphic Tokens */
-            --garage-frame-border: #40474f;
-            --garage-interior-bg: #121519;
-            --door-panel-color: #373c42;
-            --door-line-color: #4f565e;
+            --garage-frame-border: #665c54;
+            --garage-interior-bg: #1d2021;
+            --door-panel-color: #3c3836;
+            --door-line-color: #504945;
 
             /* Shape & Motion Tokens */
             --md-shape-corner-extra-large: 28px;
@@ -57,45 +56,45 @@
             --md-easing-standard: cubic-bezier(0.2, 0, 0, 1);
 
             /* Elevation Shadow */
-            --card-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+            --card-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
         }
 
         [data-theme="light"] {
-            /* M3 Light Surface Hierarchy (Tones 98 -> 90) */
-            --md-sys-color-surface: #f7f9ff;
-            --md-sys-color-surface-container-lowest: #ffffff;
-            --md-sys-color-surface-container-low: #f1f4fa;
-            --md-sys-color-surface-container: #ebeef4;
-            --md-sys-color-surface-container-high: #e5e8ee;
-            --md-sys-color-surface-container-highest: #dfe3e8;
+            /* Gruvbox Light Surface Hierarchy */
+            --md-sys-color-surface: #f9f5d7;                  /* bg0_h */
+            --md-sys-color-surface-container-lowest: #fbf1c7; /* bg0 */
+            --md-sys-color-surface-container-low: #f2e5bc;    /* bg0_s */
+            --md-sys-color-surface-container: #fbf1c7;        /* bg0 */
+            --md-sys-color-surface-container-high: #ebdbb2;   /* bg1 */
+            --md-sys-color-surface-container-highest: #d5c4a1;/* bg2 */
 
-            /* M3 Text & Outline Roles */
-            --md-sys-color-on-surface: #181c20;
-            --md-sys-color-on-surface-variant: #40474f;
-            --md-sys-color-outline: #717880;
-            --md-sys-color-outline-variant: #c0c7d0;
+            /* Gruvbox Light Text & Outline Roles */
+            --md-sys-color-on-surface: #3c3836;               /* fg1 */
+            --md-sys-color-on-surface-variant: #665c54;       /* fg3 */
+            --md-sys-color-outline: #7c6f64;                  /* fg4 */
+            --md-sys-color-outline-variant: #bdae93;          /* bg3 */
 
-            /* M3 Primary Tonal Roles */
-            --md-sys-color-primary: #0061a4;
-            --md-sys-color-on-primary: #ffffff;
-            --md-sys-color-primary-container: #0061a4;
-            --md-sys-color-on-primary-container: #ffffff;
+            /* Gruvbox Light Primary Tonal Roles */
+            --md-sys-color-primary: #076678;                  /* faded blue */
+            --md-sys-color-on-primary: #fbf1c7;
+            --md-sys-color-primary-container: #458588;        /* neutral blue */
+            --md-sys-color-on-primary-container: #fbf1c7;
 
             /* Semantic Door Status Roles */
-            --status-closed-bg: #d93025;
-            --status-closed-text: #ffffff;
-            --status-open-bg: #1e8e3e;
-            --status-open-text: #ffffff;
-            --status-mid-bg: #f9ab00;
-            --status-mid-text: #1f1f1f;
+            --status-closed-bg: #cc241d;
+            --status-closed-text: #fbf1c7;
+            --status-open-bg: #689d6a;
+            --status-open-text: #fbf1c7;
+            --status-mid-bg: #d79921;
+            --status-mid-text: #282828;
 
             /* Garage Graphic Tokens */
-            --garage-frame-border: #8a919a;
-            --garage-interior-bg: #2b3036;
-            --door-panel-color: #dfe3e8;
-            --door-line-color: #b8c0c8;
+            --garage-frame-border: #7c6f64;
+            --garage-interior-bg: #3c3836;
+            --door-panel-color: #ebdbb2;
+            --door-line-color: #bdae93;
 
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --card-shadow: 0 4px 20px rgba(60, 56, 54, 0.14);
         }
 
         * {
